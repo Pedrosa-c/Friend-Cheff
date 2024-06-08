@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.aplicacion_1" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Actividades Explícitas"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Aplicacion_1" >
+        <activity
+            android:name=".Recetas.singleReceta"
+            android:exported="false" />
+        <activity
+            android:name=".Recetas.Recetas"
+            android:exported="false" />
+        <activity
+            android:name=".Settings"
+            android:exported="false" />
+        <activity
+            android:name=".Login.FailedLogin"
+            android:exported="true" />
+        <activity
+            android:name=".MainMenu"
+            android:exported="true" />
+        <activity
+            android:name=".Login.Register"
+            android:exported="true" />
+        <activity
+            android:name=".Login.Login"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
