@@ -11,7 +11,6 @@ import android.widget.EditText;
 
 import com.example.aplicacion_1.Clases.Comentario;
 import com.example.aplicacion_1.Clases.Singleton;
-import com.example.aplicacion_1.Login.Register;
 import com.example.aplicacion_1.conexion.RecetaService;
 import com.example.aplicacion_1.conexion.RetrofitClient;
 
@@ -28,10 +27,9 @@ public class newComentario extends AppCompatActivity {
     EditText text_;
     EditText valoracion_;
 
-    int id;
+    int id = 5;
 
     private RecetaService servicios;
-    private Register miContexto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,56 +38,25 @@ public class newComentario extends AppCompatActivity {
 
         text_ = findViewById(R.id.text);
         valoracion_ = findViewById(R.id.valoracion);
-
+        id = lastIdComentario();
         // Inicializa el servicio de recetas utilizando Retrofit
         servicios = RetrofitClient.getClient().create(RecetaService.class);
-
-        añadirComentario();
     }
 
-    private void añadirComentario() {
-        // Aquí defines los datos del nuevo usuario
+    public void añadirComentario(View view) {
         Log.d("Usuarios", "Añadiendo Comentario");
 
         String text = text_.getText().toString();
         String valoracion = valoracion_.getText().toString();
 
 
-        // Llama al método anadirUsuario para añadir el nuevo usuario
-        Call<Void> call = servicios.anadirComentario(id, text, valoracion, obtenerFechaActual(),
-                obtenerHoraActual(), Singleton.getInstance().getRecetaId(),
-                Singleton.getInstance().getUserId());
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Usuarios", "Usuario añadido correctamente");
-                } else {
-                    Log.d("Usuarios", "Fallo al añadir el usuario");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Usuarios", "Fallo de conexion al añadir el usuario");
-            }
-        });
-
-        Intent anterior = new Intent(this, MainMenu.class);
-        startActivity(anterior);
-    }
-
-
-
-    public int lastIdComentario(View vista) {
+        //ID
         // Llama al método listarUsuarios para obtener la lista de usuarios
-        Call<List<Comentario>> call = servicios.listarComentarios();
-        call.enqueue(new Callback<List<Comentario>>() {
+        Call<List<Comentario>> call_ = servicios.listarComentarios();
+        call_.enqueue(new Callback<List<Comentario>>() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
-                boolean fallo = false;
+            public void onResponse(Call<List<Comentario>> call_, Response<List<Comentario>> response) {
                 if (response.isSuccessful()) {
                     List<Comentario> comentarios = response.body();
                     id = (comentarios.get(comentarios.size() - 1).getId() + 1);
@@ -101,7 +68,28 @@ public class newComentario extends AppCompatActivity {
                 Log.d("Usuarios", "Error: " + t.getMessage());
             }
         });
-        return id;
+
+        // Llama al método anadirComentario para añadir el nuevo comentario
+        Call<Void> call = servicios.anadirComentario(id, text, valoracion, obtenerFechaActual(),obtenerHoraActual(), Singleton.getInstance().getRecetaId(),Singleton.getInstance().getUserId());
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Usuarios", "Comentario añadido correctamente");
+                    // Mover el Intent aquí
+                    Intent anterior = new Intent(newComentario.this, MainMenu.class);
+                    startActivity(anterior);
+                } else {
+                    Log.d("Usuarios", "Fallo al añadir el comentario");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Usuarios", "Fallo de conexion al añadir el comentario");
+            }
+        });
     }
 
     public String obtenerFechaActual() {
@@ -114,5 +102,10 @@ public class newComentario extends AppCompatActivity {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return now.format(formatter);
+    }
+
+    public void toMenu(View vista){
+        Intent anterior = new Intent(vista.getContext(), MainMenu.class);
+        startActivity(anterior);
     }
 }
