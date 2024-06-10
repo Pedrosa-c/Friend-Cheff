@@ -10,12 +10,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.aplicacion_1.Clases.Singleton;
 import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.MainMenu;
 import com.example.aplicacion_1.R;
 import com.example.aplicacion_1.conexion.RecetaService;
 import com.example.aplicacion_1.conexion.RetrofitClient;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -71,13 +74,16 @@ public class Login extends AppCompatActivity {
                     Log.d("FILTRADO USUARIOS", "Usuarios: " + usuarios);
                     if (usuarios != null && !usuarios.isEmpty()) {
                         Usuario usuario = usuarios.get(0);
-                        Log.d("FILTRADO USUARIOS", "NOMBRE DE Usuario: " + usuario.getNombre());
-                        Log.d("FILTRADO USUARIOS", "contraseña DE Usuario: " + usuario.getContraseña());
 
-                        if (myPassword.equals(usuario.getContraseña())) {
+                        if (usuario.getContraseña().equals(calculateSHA256(myPassword))) {
+
+                            //Para saber que usuario está logeado en todo momento
+                            Singleton.getInstance().setUserId(usuario.getIdUsuario());
+
                             Intent acceso = new Intent(miContexto, MainMenu.class);
                             miContexto.startActivity(acceso);
-                        } else {
+                        }
+                        else {
                             Intent errorAcceso = new Intent(miContexto, FailedLogin.class);
                             miContexto.startActivity(errorAcceso);
                         }
@@ -99,4 +105,21 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
+    public static String calculateSHA256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(input.getBytes());
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

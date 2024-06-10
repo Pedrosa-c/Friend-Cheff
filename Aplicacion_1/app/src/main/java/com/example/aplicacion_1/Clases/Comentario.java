@@ -48,8 +48,8 @@ public class Comentario {
         this.texto = texto;
     }
 
-    public Ranking getValoracion() {
-        return valoracion;
+    public String getValoracion() {
+        return valoracion.toString();
     }
 
     public void setValoracion(Ranking valoracion) {

@@ -35,7 +35,6 @@ public class Recetas extends AppCompatActivity {
     private Context miContexto;
     private View rootView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,15 +47,18 @@ public class Recetas extends AppCompatActivity {
         // Inicializa el servicio de recetas utilizando Retrofit
         servicios = RetrofitClient.getClient().create(RecetaService.class);
 
-        listaFotos();
-        listarRecetas();
+        myRecycler = findViewById(R.id.rvRecetas);
+        myRecycler.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
+        myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));
 
-        myRecycler = findViewById(R.id.rvRecetas);//Esta cogiendo el layout del recycler.
-        myRecycler.addItemDecoration(new DividerItemDecoration(miContexto,DividerItemDecoration.VERTICAL));
-        myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));//Se le pasa al recycler la layout donde mostrar
+        // Inicializa la lista de fotos
+        listaFotos();
+
+        // Lista las recetas
+        listarRecetas();
     }
 
-    private void listaFotos(){
+    private void listaFotos() {
         listaFotos = new int[4];
         listaFotos[0] = R.drawable.foto1;
         listaFotos[1] = R.drawable.foto2;
@@ -66,7 +68,6 @@ public class Recetas extends AppCompatActivity {
 
     // Método para listar todas las recetas disponibles
     private void listarRecetas() {
-        // Realiza una llamada asíncrona al servicio de recetas para obtener la lista de recetas
         Call<List<Receta>> call = servicios.listarRecetas();
         call.enqueue(new Callback<List<Receta>>() {
             @Override
@@ -74,35 +75,39 @@ public class Recetas extends AppCompatActivity {
                 Log.d("LISTA RECETAS", "CONEXION EXITOSA");
                 if (response.isSuccessful()) {
                     Log.d("LISTA RECETAS", "ME HAN RESPONDIDO");
-                    // Si la respuesta es exitosa, obtiene la lista de recetas y la muestra en el Log
                     recetas = response.body();
 
-                    Log.d("MainActivity1", "Recetas: " + recetas);
+                    // Verificar si recetas no es nulo y tiene elementos
                     if (recetas != null && !recetas.isEmpty()) {
-                        Log.d("MainActivity1", "NOMBRE DE LA PRIMERA RECETA: " + recetas.get(0).getNombre());
+                        Log.d("LISTA RECETAS", "Recetas recibidas: " + recetas.size());
+                        Log.d("LISTA RECETAS", "Nombre de la primera receta: " + recetas.get(0).getNombre());
+                    } else {
+                        Log.d("LISTA RECETAS", "No se recibieron recetas");
                     }
 
                     // Configura el adaptador con los datos recibidos
                     configurarAdaptador();
+                } else {
+                    Log.d("LISTA RECETAS", "RESPUESTA FALLIDA: " + response.message());
+                    Toast.makeText(miContexto, "Error en la respuesta: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Receta>> call, Throwable t) {
-                Log.d("LISTA RECETAS", "CONEXION FALLIDA");
-                // Si la llamada falla, muestra un mensaje de error mediante un Toast
+                Log.d("LISTA RECETAS", "CONEXION FALLIDA: " + t.getMessage());
                 Toast.makeText(miContexto, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void configurarAdaptador() {
-        RecetaAdapter adapter = new RecetaAdapter(miContexto, recetas, listaFotos);
+        RecetaAdapter adapter = new RecetaAdapter(miContexto, recetas);
         myRecycler.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecetaAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Log.d("ONCLICK","DENTRO DEL ONCLICK, posicion: " + position + " nombre: " + recetas.get(position).getNombre());
+                Log.d("ONCLICK", "DENTRO DEL ONCLICK, posición: " + position + " nombre: " + recetas.get(position).getNombre());
                 Intent intent = new Intent(miContexto, singleReceta.class);
 
                 intent.putExtra("nombre", recetas.get(position).getNombre());

@@ -15,17 +15,17 @@ import com.example.aplicacion_1.R;
 import java.util.List;
 
 public class RecetaAdapter extends RecyclerView.Adapter<RecetaAdapter.RecetasViewHolder> {
-    Context contexto;
-    List<Receta> misRecetas;
+    private Context contexto;
+    private List<Receta> misRecetas;
     private OnItemClickListener listener;
 
-    public RecetaAdapter(Context contexto, List<Receta> listaRecetas, int[] fotos) {
+    public RecetaAdapter(Context contexto, List<Receta> listaRecetas) {
         this.contexto = contexto;
-        misRecetas = listaRecetas;
+        this.misRecetas = listaRecetas;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int receta);
+        void onItemClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -34,31 +34,32 @@ public class RecetaAdapter extends RecyclerView.Adapter<RecetaAdapter.RecetasVie
 
     @Override
     public RecetasViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(contexto);
-        View miVistaRecetas = inflater.inflate(R.layout.receta_compuesto, parent, false);
-        return new RecetasViewHolder(miVistaRecetas);
+        View miVistaRecetas = LayoutInflater.from(contexto).inflate(R.layout.receta_compuesto, parent, false);
+        return new RecetasViewHolder(miVistaRecetas, listener);
     }
 
     @Override
     public void onBindViewHolder(RecetasViewHolder holder, int position) {
         Receta receta_i = misRecetas.get(position);
 
-        Log.d("nombre: ", receta_i.getNombre());
+        // Agregar logs para depuración
+        Log.d("RecetaAdapter", "Binding receta: " + receta_i.getNombre() + ", posición: " + position);
 
         holder.nombre.setText(receta_i.getNombre());
         holder.descripcion.setText(receta_i.getDescripcion());
-        //holder.itemView.setTag(receta_i); // Set the tag for the item view
     }
 
     @Override
     public int getItemCount() {
+        // Agregar log para verificar tamaño de la lista
+        Log.d("RecetaAdapter", "Item count: " + misRecetas.size());
         return misRecetas.size();
     }
 
-    public class RecetasViewHolder extends RecyclerView.ViewHolder {
+    public static class RecetasViewHolder extends RecyclerView.ViewHolder {
         TextView nombre, descripcion;
 
-        public RecetasViewHolder(View itemView) {
+        public RecetasViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
             nombre = itemView.findViewById(R.id.nombre);
             descripcion = itemView.findViewById(R.id.descripcion);
@@ -68,9 +69,7 @@ public class RecetaAdapter extends RecyclerView.Adapter<RecetaAdapter.RecetasVie
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (listener != null && position != RecyclerView.NO_POSITION) {
-                        Receta receta = (Receta) v.getTag();
                         listener.onItemClick(position);
-                        Log.d("LISTENER", "Listener triggering on click");
                     }
                 }
             });
