@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/nombre"
+        android:id="@+id/texto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -17,13 +17,13 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/descripcion"
+        android:id="@+id/valoracion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Descripción de la Receta"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/nombre"
+        app:layout_constraintTop_toBottomOf="@id/texto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
