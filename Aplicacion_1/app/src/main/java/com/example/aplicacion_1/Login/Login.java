@@ -1,20 +1,33 @@
 package com.example.aplicacion_1.Login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.MainMenu;
 import com.example.aplicacion_1.R;
+import com.example.aplicacion_1.conexion.RecetaService;
+import com.example.aplicacion_1.conexion.RetrofitClient;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
     EditText name, password;
-    String nameControl, passwordControl;
+    private RecetaService servicios;
+    private Context miContexto;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +36,13 @@ public class Login extends AppCompatActivity {
 
         name = findViewById(R.id.editTextName);
         password = findViewById(R.id.editTextPassword);
-        nameControl = "Name";
-        passwordControl = "Password";
 
+        // Inicializa rootView después de setContentView
+        rootView = findViewById(android.R.id.content);
+        miContexto = rootView.getContext(); // para evitar el error del contexto
+
+        // Inicializa el servicio de recetas utilizando Retrofit
+        servicios = RetrofitClient.getClient().create(RecetaService.class);
     }
 
     public void toRegister(View vista){
@@ -35,32 +52,51 @@ public class Login extends AppCompatActivity {
 
     public void verificaDatos(View vista){
 
-        String myEmail, myPassword;
-        boolean control;
+        String myEmail = name.getText().toString();
+        String myPassword = password.getText().toString();
 
-        myEmail = name.getText().toString();
-        myPassword = password.getText().toString();
+        Log.d("Valor name: ", myEmail);
 
-        Log.d("Valor name: ", name.getText().toString());
+        // Realiza una llamada asíncrona al servicio de recetas para obtener el usuario dado el nombre
+        Call<List<Usuario>> call = servicios.filtrarUsuariosNombre(myEmail);
+        call.enqueue(new Callback<List<Usuario>>() {
+            @Override
+            public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                Log.d("FILTRADO USUARIOS", "CONEXION EXITOSA");
+                if (response.isSuccessful()) {
+                    Log.d("FILTRADO USUARIOS", "ME HAN RESPONDIDO");
+                    // Si la respuesta es exitosa, obtiene la lista de usuarios
+                    List<Usuario> usuarios = response.body();
 
-        control = compruebaClaves(myEmail,myPassword);
+                    Log.d("FILTRADO USUARIOS", "Usuarios: " + usuarios);
+                    if (usuarios != null && !usuarios.isEmpty()) {
+                        Usuario usuario = usuarios.get(0);
+                        Log.d("FILTRADO USUARIOS", "NOMBRE DE Usuario: " + usuario.getNombre());
+                        Log.d("FILTRADO USUARIOS", "contraseña DE Usuario: " + usuario.getContraseña());
 
-        if(!control){
-            Intent errorAcceso = new Intent(this,FailedLogin.class);
-            startActivity(errorAcceso);
-        }else{
-            Intent acceso = new Intent(this, MainMenu.class);
-            startActivity(acceso);
-        }
-    }
-
-    private boolean compruebaClaves(String name, String clave){
-        boolean cierto = false;
-        if(name != null && clave!= null){
-            if((name.equals(nameControl)) && clave.equals(passwordControl)){
-                cierto = true;
+                        if (myPassword.equals(usuario.getContraseña())) {
+                            Intent acceso = new Intent(miContexto, MainMenu.class);
+                            miContexto.startActivity(acceso);
+                        } else {
+                            Intent errorAcceso = new Intent(miContexto, FailedLogin.class);
+                            miContexto.startActivity(errorAcceso);
+                        }
+                    } else {
+                        Intent errorAcceso = new Intent(miContexto, FailedLogin.class);
+                        miContexto.startActivity(errorAcceso);
+                    }
+                } else {
+                    Intent errorAcceso = new Intent(miContexto, FailedLogin.class);
+                    miContexto.startActivity(errorAcceso);
+                }
             }
-        }
-        return cierto;
+
+            @Override
+            public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                Log.d("FILTRADO USUARIOS", "CONEXION FALLIDA");
+                // Si la llamada falla, muestra un mensaje de error mediante un Toast
+                Toast.makeText(miContexto, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

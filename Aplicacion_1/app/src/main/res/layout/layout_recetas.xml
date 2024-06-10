@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Recetas.Recetas">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecetas"
         android:layout_width="371dp"

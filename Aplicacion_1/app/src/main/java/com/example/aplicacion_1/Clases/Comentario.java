@@ -9,17 +9,19 @@ import com.example.aplicacion_1.Enumerados.TipoAlergeno;
  */
 public class Comentario {
     private int id;
+    private int recetaId;
     private String texto;
     private Ranking valoracion;
     private String fecha;
     private String hora;
 
-    public Comentario(int id, String texto, Ranking valoracion, String fecha, String hora) {
+    public Comentario(int id, String texto, Ranking valoracion, String fecha, String hora, int recetaid) {
         this.id = id;
         this.texto = texto;
         this.valoracion = valoracion;
         this.fecha = fecha;
         this.hora = hora;
+        this.recetaId = recetaid;
     }
 
     public int getId() {
@@ -28,6 +30,14 @@ public class Comentario {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getRecetaidId() {
+        return recetaId;
+    }
+
+    public void setRecetaidId(int recetaid) {
+        this.recetaId = recetaid;
     }
 
     public String getTexto() {
