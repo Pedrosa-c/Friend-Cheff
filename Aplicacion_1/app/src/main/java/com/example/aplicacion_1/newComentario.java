@@ -27,8 +27,6 @@ public class newComentario extends AppCompatActivity {
     EditText text_;
     EditText valoracion_;
 
-    int id = 5;
-
     private RecetaService servicios;
 
     @Override
@@ -38,7 +36,7 @@ public class newComentario extends AppCompatActivity {
 
         text_ = findViewById(R.id.text);
         valoracion_ = findViewById(R.id.valoracion);
-        id = lastIdComentario();
+
         // Inicializa el servicio de recetas utilizando Retrofit
         servicios = RetrofitClient.getClient().create(RecetaService.class);
     }
@@ -49,47 +47,63 @@ public class newComentario extends AppCompatActivity {
         String text = text_.getText().toString();
         String valoracion = valoracion_.getText().toString();
 
+        // Obtener el último ID y luego añadir el comentario
+        obtenerUltimoIdComentario(new IdCallback() {
+            @Override
+            public void onIdObtained(int id) {
+                // Llama al método anadirComentario para añadir el nuevo comentario
+                Call<Void> call = servicios.anadirComentario(id, text, valoracion, obtenerFechaActual(),
+                        obtenerHoraActual(), Singleton.getInstance().getRecetaId(),
+                        Singleton.getInstance().getUserId());
 
-        //ID
-        // Llama al método listarUsuarios para obtener la lista de usuarios
-        Call<List<Comentario>> call_ = servicios.listarComentarios();
-        call_.enqueue(new Callback<List<Comentario>>() {
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("Usuarios", "Comentario añadido correctamente");
+                            // Mover el Intent aquí
+                            Intent anterior = new Intent(newComentario.this, MainMenu.class);
+                            startActivity(anterior);
+                        } else {
+                            Log.d("Usuarios", "Fallo al añadir el comentario");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.d("Usuarios", "Fallo de conexion al añadir el comentario");
+                    }
+                });
+            }
+        });
+    }
+
+    private void obtenerUltimoIdComentario(IdCallback callback) {
+        Call<List<Comentario>> call = servicios.listarComentarios();
+        call.enqueue(new Callback<List<Comentario>>() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onResponse(Call<List<Comentario>> call_, Response<List<Comentario>> response) {
+            public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
                 if (response.isSuccessful()) {
                     List<Comentario> comentarios = response.body();
-                    id = (comentarios.get(comentarios.size() - 1).getId() + 1);
+                    int id = comentarios.get(comentarios.size() - 1).getId() + 1;
+                    callback.onIdObtained(id);
+                } else {
+                    Log.d("Usuarios", "Fallo al obtener el ID");
+                    callback.onIdObtained(0); // Manejar el fallo adecuadamente
                 }
             }
 
             @Override
             public void onFailure(Call<List<Comentario>> call, Throwable t) {
                 Log.d("Usuarios", "Error: " + t.getMessage());
+                callback.onIdObtained(0); // Manejar el fallo adecuadamente
             }
         });
+    }
 
-        // Llama al método anadirComentario para añadir el nuevo comentario
-        Call<Void> call = servicios.anadirComentario(id, text, valoracion, obtenerFechaActual(),obtenerHoraActual(), Singleton.getInstance().getRecetaId(),Singleton.getInstance().getUserId());
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Usuarios", "Comentario añadido correctamente");
-                    // Mover el Intent aquí
-                    Intent anterior = new Intent(newComentario.this, MainMenu.class);
-                    startActivity(anterior);
-                } else {
-                    Log.d("Usuarios", "Fallo al añadir el comentario");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Usuarios", "Fallo de conexion al añadir el comentario");
-            }
-        });
+    public interface IdCallback {
+        void onIdObtained(int id);
     }
 
     public String obtenerFechaActual() {
