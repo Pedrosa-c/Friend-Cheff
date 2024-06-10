@@ -1,6 +1,7 @@
 package com.example.aplicacion_1.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,12 +42,17 @@ public class RecetaAdapter extends RecyclerView.Adapter<RecetaAdapter.RecetasVie
     public void onBindViewHolder(RecetasViewHolder holder, int position) {
         Receta receta_i = misRecetas.get(position);
 
+        // Agregar logs para depuración
+        Log.d("RecetaAdapter", "Binding receta: " + receta_i.getNombre() + ", posición: " + position);
+
         holder.nombre.setText(receta_i.getNombre());
         holder.descripcion.setText(receta_i.getDescripcion());
     }
 
     @Override
     public int getItemCount() {
+        // Agregar log para verificar tamaño de la lista
+        Log.d("RecetaAdapter", "Item count: " + misRecetas.size());
         return misRecetas.size();
     }
 

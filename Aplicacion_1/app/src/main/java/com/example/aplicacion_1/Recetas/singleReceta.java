@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DirectAction;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,26 +27,27 @@ import retrofit2.Response;
 public class singleReceta extends AppCompatActivity {
 
     private List<Comentario> comentarios;
-    private List<Comentario> comentariosAmostrar;
     private RecyclerView myRecycler;
     private RecetaService servicios;
     private Context miContexto;
 
     private int usuarioLogeado = Singleton.getInstance().getUserId();
 
-    Bundle  contenidoActividadRecetas;
+    Bundle contenidoActividadRecetas;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.layout_single_receta);
+
+        miContexto = this;
+
         contenidoActividadRecetas = getIntent().getExtras();
 
         servicios = RetrofitClient.getClient().create(RecetaService.class);
-        myRecycler = findViewById(R.id.rvRecetas);
+        myRecycler = findViewById(R.id.rvComentarios);
         myRecycler.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
         myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));
-
 
         Log.d("ID Receta", "id de la receta viendose: " +  Singleton.getInstance().getRecetaId());
 
@@ -62,12 +62,9 @@ public class singleReceta extends AppCompatActivity {
             public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
                 if (response.isSuccessful()) {
                     comentarios = response.body();
-                    for (Comentario comentario : comentarios) {
 
-                    }
-//                    configurarAdaptador();
                 } else {
-                    Toast.makeText(miContexto, "Error al obtener las recetas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(miContexto, "Error al obtener los comentarios", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -78,7 +75,7 @@ public class singleReceta extends AppCompatActivity {
         });
     }
 
-    private void creaSingle(){
+    private void creaSingle() {
         TextView textViewNombre = findViewById(R.id.nombre);
         TextView textViewOrigen = findViewById(R.id.origen);
         TextView textViewDescripcion = findViewById(R.id.descripcion);
@@ -90,7 +87,5 @@ public class singleReceta extends AppCompatActivity {
         textViewNombre.setText(nombreRecibido);
         textViewOrigen.setText(origenRecibido);
         textViewDescripcion.setText(descripcionRecibida);
-
-
     }
 }
