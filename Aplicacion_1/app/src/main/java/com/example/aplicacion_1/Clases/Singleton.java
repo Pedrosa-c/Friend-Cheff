@@ -3,7 +3,8 @@ package com.example.aplicacion_1.Clases;
 public class Singleton {
     private static Singleton instance;
     private int userId;
-    private int recetaId;
+    private Receta receta;
+    private Usuario usuario;
 
     private Singleton() { }
 
@@ -18,15 +19,19 @@ public class Singleton {
         return userId;
     }
 
+    public void setReceta(Receta receta){this.receta = receta;}
+
+    public void setUsuario(Usuario usuario){this.usuario = usuario;}
+
     public void setUserId(int id) {
         this.userId = id;
     }
 
     public int getRecetaId() {
-        return recetaId;
+        return receta.getId();
     }
 
     public void setRecetaId(int id) {
-        this.recetaId = id;
+        this.receta.setId(id);
     }
 }

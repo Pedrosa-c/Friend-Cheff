@@ -99,7 +99,7 @@ public class Recetas extends AppCompatActivity {
             public void onItemClick(int position) {
                 Log.d("ONCLICK", "DENTRO DEL ONCLICK, posición: " + position + " nombre: " + recetas.get(position).getNombre());
                 //Para saber que usuario está logeado en todo momento
-                Singleton.getInstance().setRecetaId(recetas.get(position).getId());
+                Singleton.getInstance().setReceta(recetas.get(position));
 
                 Intent intent = new Intent(Recetas.this, singleReceta.class);
 

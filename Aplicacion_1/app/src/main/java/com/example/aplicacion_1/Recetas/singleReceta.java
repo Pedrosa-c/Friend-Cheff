@@ -16,7 +16,9 @@ import android.widget.Toast;
 import com.example.aplicacion_1.Adapters.ComentarioAdapter;
 import com.example.aplicacion_1.Clases.Comentario;
 import com.example.aplicacion_1.Clases.Singleton;
+import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.R;
+import com.example.aplicacion_1.SingleUsuario;
 import com.example.aplicacion_1.conexion.RecetaService;
 import com.example.aplicacion_1.conexion.RetrofitClient;
 import com.example.aplicacion_1.newComentario;
@@ -32,6 +34,10 @@ public class singleReceta extends AppCompatActivity {
 
     private List<Comentario> comentarios;
     private List<Comentario> comentariosMuestra = new ArrayList<>();
+
+    private List<Usuario> usuarios;
+    private Usuario usuario;
+
     private RecyclerView myRecycler;
     private RecetaService servicios;
     private Context miContexto;
@@ -104,6 +110,7 @@ public class singleReceta extends AppCompatActivity {
         TextView textViewNombre = findViewById(R.id.nombre);
         TextView textViewOrigen = findViewById(R.id.origen);
         TextView textViewDescripcion = findViewById(R.id.descripcion);
+        TextView textViewUser = findViewById(R.id.usuario);
 
         String nombreRecibido = contenidoActividadRecetas.getString("nombre");
         String origenRecibido = contenidoActividadRecetas.getString("origen");
@@ -112,6 +119,38 @@ public class singleReceta extends AppCompatActivity {
         textViewNombre.setText(nombreRecibido);
         textViewOrigen.setText(origenRecibido);
         textViewDescripcion.setText(descripcionRecibida);
+
+        Call<List<Usuario>> call = servicios.listarUsuarios();
+        call.enqueue(new Callback<List<Usuario>>() {
+            @Override
+            public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                if (response.isSuccessful()) {
+                    usuarios = response.body();
+                    if (usuarios != null) {
+                        Log.d("COMENTARIOS", "Comentarios a mostrar: " + comentarios);
+                        for (Usuario usuario_ : usuarios) {
+                            for(int id : usuario_.getIdRecetas()){
+                                if(id == idReceta){
+                                    usuario = usuario_;
+                                    textViewUser.setText(usuario.getNombre());
+                                }
+                            }
+                        }
+                        Log.d("COMENTARIOS", "Comentarios a mostrar: " + comentariosMuestra);
+
+                    } else {
+                        Log.d("COMENTARIOS", "No hay comentarios");
+                    }
+                } else {
+                    Toast.makeText(miContexto, "Error al obtener los comentarios", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                Toast.makeText(miContexto, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void configurarAdaptador() {
@@ -133,6 +172,12 @@ public class singleReceta extends AppCompatActivity {
 
     public void toCrearComentario(View vista){
         Intent anterior = new Intent(vista.getContext(), newComentario.class);
+        startActivity(anterior);
+    }
+
+    public void toSingleUser(View vista){
+
+        Intent anterior = new Intent(vista.getContext(), SingleUsuario.class);
         startActivity(anterior);
     }
 }

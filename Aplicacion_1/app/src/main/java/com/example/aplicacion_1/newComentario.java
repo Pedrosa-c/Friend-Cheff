@@ -86,18 +86,22 @@ public class newComentario extends AppCompatActivity {
             public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
                 if (response.isSuccessful()) {
                     List<Comentario> comentarios = response.body();
-                    int id = comentarios.get(comentarios.size() - 1).getId() + 1;
-                    callback.onIdObtained(id);
+                    if (comentarios != null && !comentarios.isEmpty()) {
+                        int id = comentarios.get(comentarios.size() - 1).getId() + 1;
+                        callback.onIdObtained(id);
+                    } else {
+                        callback.onIdObtained(1); // Si no hay comentarios, empezar con ID 1
+                    }
                 } else {
                     Log.d("Usuarios", "Fallo al obtener el ID");
-                    callback.onIdObtained(0); // Manejar el fallo adecuadamente
+                    callback.onIdObtained(1); // Manejar el fallo adecuadamente
                 }
             }
 
             @Override
             public void onFailure(Call<List<Comentario>> call, Throwable t) {
                 Log.d("Usuarios", "Error: " + t.getMessage());
-                callback.onIdObtained(0); // Manejar el fallo adecuadamente
+                callback.onIdObtained(1); // Manejar el fallo adecuadamente
             }
         });
     }

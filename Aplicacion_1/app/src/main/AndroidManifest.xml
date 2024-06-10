@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Aplicacion_1">
         <activity
+            android:name=".SingleUsuario"
+            android:exported="false" />
+        <activity
             android:name=".newComentario"
             android:exported="false" />
         <activity

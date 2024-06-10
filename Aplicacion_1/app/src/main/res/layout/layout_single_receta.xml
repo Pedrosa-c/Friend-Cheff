@@ -20,15 +20,15 @@
 
     <TextView
         android:id="@+id/origen"
-        android:layout_width="316dp"
-        android:layout_height="42dp"
+        android:layout_width="318dp"
+        android:layout_height="44dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.119" />
+        app:layout_constraintVertical_bias="0.092" />
 
     <TextView
         android:id="@+id/descripcion"
@@ -40,7 +40,7 @@
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/origen"
-        app:layout_constraintVertical_bias="0.098" />
+        app:layout_constraintVertical_bias="0.122" />
 
     <Button
         android:id="@+id/toCreaComentario"
@@ -64,4 +64,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nombre"
         app:layout_constraintVertical_bias="0.869" />
+
+    <TextView
+        android:id="@+id/usuario"
+        android:layout_width="318dp"
+        android:layout_height="44dp"
+        android:onClick="toSingleUser"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/descripcion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/origen" />
 </androidx.constraintlayout.widget.ConstraintLayout>

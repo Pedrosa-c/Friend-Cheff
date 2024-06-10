@@ -58,4 +58,10 @@ public interface RecetaService {
             @Field("usuarioId") int usuarioId
     );
 
+    // Método para obtener un usuario por ID
+    @FormUrlEncoded
+    @POST("friendchef/ObtenerUsuario")
+    Call<Usuario> obtenerUsuario(
+            @Field("usuarioId") int usuarioId
+    );
 }
