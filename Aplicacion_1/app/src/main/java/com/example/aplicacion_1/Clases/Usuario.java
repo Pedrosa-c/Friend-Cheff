@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Usuario {
 
-    private int idUsuario;
+    private int id;
     private String nombre;
     private String telefono;
     private String email;
@@ -21,7 +21,7 @@ public class Usuario {
     private List<Integer> idAmigos;
 
     public Usuario(int idUsuario, String nombre, String telefono, String email, String contraseña) {
-        this.idUsuario = idUsuario;
+        this.id = idUsuario;
         this.nombre = nombre;
         this.telefono = telefono;
         this.email = email;
@@ -33,11 +33,11 @@ public class Usuario {
     }
 
     public int getIdUsuario() {
-        return idUsuario;
+        return id;
     }
 
     public void setIdUsuario(int usuario) {
-        this.idUsuario = usuario;
+        this.id = usuario;
     }
 
     public String getNombre() {
@@ -134,7 +134,7 @@ public class Usuario {
 
     public String toString() {
         return "UsuarioImpl{" +
-                "idUsuario=" + idUsuario +
+                "idUsuario=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", email='" + email + '\'' +

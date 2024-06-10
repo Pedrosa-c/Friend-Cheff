@@ -5,50 +5,55 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.aplicacion_1.Adapters.RecetaAdapter;
 import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.MainMenu;
 import com.example.aplicacion_1.R;
+import com.example.aplicacion_1.conexion.RecetaService;
+import com.example.aplicacion_1.conexion.RetrofitClient;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Recetas extends AppCompatActivity {
 
     private int[] listaFotos;
-    private Receta[] recetas;
+    private List<Receta> recetas;
     RecyclerView myRecycler;
+
+    private RecetaService servicios;
+    private Context miContexto;
+    private View rootView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_recetas);
 
+        // Inicializa rootView después de setContentView
+        rootView = findViewById(android.R.id.content);
+        miContexto = rootView.getContext(); // para evitar el error del contexto
+
+        // Inicializa el servicio de recetas utilizando Retrofit
+        servicios = RetrofitClient.getClient().create(RecetaService.class);
+
         listaFotos();
-        recetasList();
+        listarRecetas();
+
         myRecycler = findViewById(R.id.rvRecetas);//Esta cogiendo el layout del recycler.
-        myRecycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        RecetaAdapter misRecetas = new RecetaAdapter(this, recetas, listaFotos);//Este es el adapter que monta cada ViewHolder.
-
-        myRecycler.setLayoutManager(new LinearLayoutManager(this));//Se el pasa al recycler la layout donde mostrar
-        myRecycler.setAdapter(misRecetas);//Se le pasa el adapter.
-
-    }
-
-    public void toSingleReceta(View vista){
-
-        TextView textname = findViewById(R.id.nombre);
-        String nombre = textname.getText().toString();
-
-        Intent toSingleReceta = new Intent(this, singleReceta.class);
-        toSingleReceta.putExtra("titulo",nombre);
-
-        startActivity(toSingleReceta);
+        myRecycler.addItemDecoration(new DividerItemDecoration(miContexto,DividerItemDecoration.VERTICAL));
+        myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));//Se le pasa al recycler la layout donde mostrar
     }
 
     private void listaFotos(){
@@ -59,78 +64,57 @@ public class Recetas extends AppCompatActivity {
         listaFotos[3] = R.drawable.foto4;
     }
 
-    private void recetasList(){
-        /*
-         * Esto podría ser una lista de usuarios, la única diferencia es que tendrías que cargar
-         * la lista desde una BD o desde un archivo externo.
-         */
+    // Método para listar todas las recetas disponibles
+    private void listarRecetas() {
+        // Realiza una llamada asíncrona al servicio de recetas para obtener la lista de recetas
+        Call<List<Receta>> call = servicios.listarRecetas();
+        call.enqueue(new Callback<List<Receta>>() {
+            @Override
+            public void onResponse(Call<List<Receta>> call, Response<List<Receta>> response) {
+                Log.d("LISTA RECETAS", "CONEXION EXITOSA");
+                if (response.isSuccessful()) {
+                    Log.d("LISTA RECETAS", "ME HAN RESPONDIDO");
+                    // Si la respuesta es exitosa, obtiene la lista de recetas y la muestra en el Log
+                    recetas = response.body();
 
-        recetas = new Receta[4];
+                    Log.d("MainActivity1", "Recetas: " + recetas);
+                    if (recetas != null && !recetas.isEmpty()) {
+                        Log.d("MainActivity1", "NOMBRE DE LA PRIMERA RECETA: " + recetas.get(0).getNombre());
+                    }
 
-        Set<Integer> imagenes1 = new HashSet<>();
-        imagenes1.add(101);
-        imagenes1.add(102);
+                    // Configura el adaptador con los datos recibidos
+                    configurarAdaptador();
+                }
+            }
 
-        Set<Integer> ingredientes1 = new HashSet<>();
-        ingredientes1.add(201);
-        ingredientes1.add(202);
+            @Override
+            public void onFailure(Call<List<Receta>> call, Throwable t) {
+                Log.d("LISTA RECETAS", "CONEXION FALLIDA");
+                // Si la llamada falla, muestra un mensaje de error mediante un Toast
+                Toast.makeText(miContexto, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-        Set<Integer> comentarios1 = new HashSet<>();
-        comentarios1.add(301);
-        comentarios1.add(302);
+    private void configurarAdaptador() {
+        RecetaAdapter adapter = new RecetaAdapter(miContexto, recetas, listaFotos);
+        myRecycler.setAdapter(adapter);
+        adapter.setOnItemClickListener(new RecetaAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Log.d("ONCLICK","DENTRO DEL ONCLICK, posicion: " + position + " nombre: " + recetas.get(position).getNombre());
+                Intent intent = new Intent(miContexto, singleReceta.class);
 
-        Receta receta1 = new Receta(1, "Paella", imagenes1, "España", "Deliciosa paella con mariscos", ingredientes1, comentarios1, 4.5f);
-
-        Set<Integer> imagenes2 = new HashSet<>();
-        imagenes2.add(103);
-        imagenes2.add(104);
-
-        Set<Integer> ingredientes2 = new HashSet<>();
-        ingredientes2.add(203);
-        ingredientes2.add(204);
-
-        Set<Integer> comentarios2 = new HashSet<>();
-        comentarios2.add(303);
-        comentarios2.add(304);
-
-        Receta receta2 = new Receta(2, "Tacos", imagenes2, "México", "Tacos auténticos con carne asada", ingredientes2, comentarios2, 4.7f);
-
-        Set<Integer> imagenes3 = new HashSet<>();
-        imagenes3.add(105);
-        imagenes3.add(106);
-
-        Set<Integer> ingredientes3 = new HashSet<>();
-        ingredientes3.add(205);
-        ingredientes3.add(206);
-
-        Set<Integer> comentarios3 = new HashSet<>();
-        comentarios3.add(305);
-        comentarios3.add(306);
-
-        Receta receta3 = new Receta(3, "Sushi", imagenes3, "Japón", "Sushi fresco y sabroso", ingredientes3, comentarios3, 4.8f);
-
-        Set<Integer> imagenes4 = new HashSet<>();
-        imagenes4.add(107);
-        imagenes4.add(108);
-
-        Set<Integer> ingredientes4 = new HashSet<>();
-        ingredientes4.add(207);
-        ingredientes4.add(208);
-
-        Set<Integer> comentarios4 = new HashSet<>();
-        comentarios4.add(307);
-        comentarios4.add(308);
-
-        Receta receta4 = new Receta(4, "Pizza", imagenes4, "Italia", "Pizza con queso y pepperoni", ingredientes4, comentarios4, 4.6f);
-
-        recetas[0] = receta1;
-        recetas[1] = receta2;
-        recetas[2] = receta3;
-        recetas[3] = receta4;
+                intent.putExtra("nombre", recetas.get(position).getNombre());
+                intent.putExtra("origen", recetas.get(position).getOrigen());
+                intent.putExtra("descripcion", recetas.get(position).getDescripcion());
+                miContexto.startActivity(intent);
+            }
+        });
     }
 
     public void toMenu(View view) {
-        Intent anterior = new Intent(this, MainMenu.class);
-        startActivity(anterior);
+        Intent anterior = new Intent(miContexto, MainMenu.class);
+        miContexto.startActivity(anterior);
     }
 }

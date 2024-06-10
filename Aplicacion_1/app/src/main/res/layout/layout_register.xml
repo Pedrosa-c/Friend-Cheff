@@ -10,14 +10,14 @@
         android:id="@+id/BotonRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="Register"
+        android:onClick="registroUsuario"
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.83" />
+        app:layout_constraintVertical_bias="0.871" />
 
     <TextView
         android:id="@+id/Siguiente"
@@ -42,7 +42,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BotonRegister"
-        app:layout_constraintVertical_bias="0.279" />
+        app:layout_constraintVertical_bias="0.431" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Siguiente"
-        app:layout_constraintVertical_bias="0.611">
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:textSize="20dp" />
 
             <EditText
-                android:id="@+id/editTextNombre"
+                android:id="@+id/nombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter text here" />
@@ -81,7 +81,7 @@
 
 
             <EditText
-                android:id="@+id/editTelefono"
+                android:id="@+id/telefono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Another EditText" />
@@ -94,7 +94,7 @@
                 android:textSize="20dp" />
 
             <EditText
-                android:id="@+id/editEmail"
+                android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Another EditText" />
@@ -107,12 +107,24 @@
                 android:textSize="20dp" />
 
             <EditText
-                android:id="@+id/editContraseña"
+                android:id="@+id/contraseña"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Another EditText" />
 
             <!-- Puedes añadir más EditTexts u otros elementos aquí -->
+
+            <TextView
+                android:id="@+id/ErrorView"
+                android:layout_width="347dp"
+                android:layout_height="70dp"
+                android:text=""
+                app:layout_constraintBottom_toTopOf="@+id/divider3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+                app:layout_constraintVertical_bias="0.526" />
 
         </LinearLayout>
     </ScrollView>
@@ -127,6 +139,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.774" />
+        app:layout_constraintVertical_bias="0.787" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

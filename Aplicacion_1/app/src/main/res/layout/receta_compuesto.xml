@@ -10,7 +10,6 @@
         android:layout_width="300dp"
         android:layout_height="122dp"
         android:layout_marginTop="16dp"
-        android:onClick="toSingleReceta"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
