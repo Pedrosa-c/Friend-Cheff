@@ -9,19 +9,21 @@ import com.example.aplicacion_1.Enumerados.TipoAlergeno;
  */
 public class Comentario {
     private int id;
-    private int recetaId;
     private String texto;
-    private Ranking valoracion;
+    private String valoracion;
     private String fecha;
     private String hora;
+    private int recetaId;
+    private int usuarioId;
 
-    public Comentario(int id, String texto, Ranking valoracion, String fecha, String hora, int recetaid) {
+    public Comentario(int id, String texto, String valoracion, String fecha, String hora, int recetaId, int usuarioId) {
         this.id = id;
         this.texto = texto;
         this.valoracion = valoracion;
         this.fecha = fecha;
         this.hora = hora;
-        this.recetaId = recetaid;
+        this.recetaId = recetaId;
+        this.usuarioId = usuarioId;
     }
 
     public int getId() {
@@ -32,11 +34,11 @@ public class Comentario {
         this.id = id;
     }
 
-    public int getRecetaidId() {
+    public int getRecetaId() {
         return recetaId;
     }
 
-    public void setRecetaidId(int recetaid) {
+    public void setRecetaId(int recetaid) {
         this.recetaId = recetaid;
     }
 
@@ -52,7 +54,7 @@ public class Comentario {
         return valoracion.toString();
     }
 
-    public void setValoracion(Ranking valoracion) {
+    public void setValoracion(String valoracion) {
         this.valoracion = valoracion;
     }
 
@@ -73,12 +75,14 @@ public class Comentario {
     }
 
     public String toString() {
-        return "ComentarioImpl{" +
+        return "Comentario{" +
                 "id=" + id +
                 ", texto='" + texto + '\'' +
                 ", valoracion=" + valoracion +
                 ", fecha='" + fecha + '\'' +
                 ", hora='" + hora + '\'' +
+                ", recetaId='" + recetaId + '\'' +
+                ", usuarioId='" + usuarioId + '\'' +
                 '}';
     }
 }

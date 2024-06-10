@@ -6,18 +6,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.aplicacion_1.Adapters.ComentarioAdapter;
 import com.example.aplicacion_1.Clases.Comentario;
-import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Singleton;
 import com.example.aplicacion_1.R;
 import com.example.aplicacion_1.conexion.RecetaService;
 import com.example.aplicacion_1.conexion.RetrofitClient;
+import com.example.aplicacion_1.newComentario;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,9 +31,11 @@ import retrofit2.Response;
 public class singleReceta extends AppCompatActivity {
 
     private List<Comentario> comentarios;
+    private List<Comentario> comentariosMuestra = new ArrayList<>();
     private RecyclerView myRecycler;
     private RecetaService servicios;
     private Context miContexto;
+    private int idReceta = Singleton.getInstance().getRecetaId();
 
     private int usuarioLogeado = Singleton.getInstance().getUserId();
 
@@ -51,8 +57,8 @@ public class singleReceta extends AppCompatActivity {
 
         Log.d("ID Receta", "id de la receta viendose: " +  Singleton.getInstance().getRecetaId());
 
-        creaSingle();
         listarComentarios();
+        creaSingle();
     }
 
     private void listarComentarios() {
@@ -62,7 +68,26 @@ public class singleReceta extends AppCompatActivity {
             public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
                 if (response.isSuccessful()) {
                     comentarios = response.body();
+                    if (comentarios != null) {
+                        Log.d("COMENTARIOS", "Comentarios a mostrar: " + comentarios);
+                        for (Comentario comentario : comentarios) {
+                            Log.d("COMENTARIOS", "ID COMENTARIO: " + comentario.getRecetaId());
+                            Log.d("COMENTARIOS", "ID RECETA: " + idReceta);
+                            if (comentario.getRecetaId() == idReceta) {
+                                comentariosMuestra.add(comentario);
+                            }
+                        }
+                        Log.d("COMENTARIOS", "Comentarios a mostrar: " + comentariosMuestra);
 
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                configurarAdaptador();
+                            }
+                        });
+                    } else {
+                        Log.d("COMENTARIOS", "No hay comentarios");
+                    }
                 } else {
                     Toast.makeText(miContexto, "Error al obtener los comentarios", Toast.LENGTH_SHORT).show();
                 }
@@ -87,5 +112,27 @@ public class singleReceta extends AppCompatActivity {
         textViewNombre.setText(nombreRecibido);
         textViewOrigen.setText(origenRecibido);
         textViewDescripcion.setText(descripcionRecibida);
+    }
+
+    private void configurarAdaptador() {
+        if (comentariosMuestra == null || comentariosMuestra.isEmpty()) {
+            Log.d("CONFIGURAR ADAPTADOR", "La lista de comentarios está vacía o es nula");
+            return;
+        }
+        Log.d("CONFIGURAR ADAPTADOR", "Configurando el adaptador con los comentarios");
+        ComentarioAdapter adapter = new ComentarioAdapter(miContexto, comentariosMuestra);
+        myRecycler.setAdapter(adapter);
+
+        // Log adicional para verificar el estado del adaptador
+        if (myRecycler.getAdapter() != null) {
+            Log.d("RECYCLER VIEW", "Adaptador asignado correctamente");
+        } else {
+            Log.d("RECYCLER VIEW", "Adaptador no asignado");
+        }
+    }
+
+    public void toCrearComentario(View vista){
+        Intent anterior = new Intent(vista.getContext(), newComentario.class);
+        startActivity(anterior);
     }
 }
