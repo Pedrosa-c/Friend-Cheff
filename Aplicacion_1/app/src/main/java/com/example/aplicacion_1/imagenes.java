@@ -17,14 +17,6 @@ public class imagenes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_imagenes);
-
-        Button button3 = findViewById(R.id.button3);
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
     }
 
     @Override

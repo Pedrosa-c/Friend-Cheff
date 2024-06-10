@@ -31,4 +31,8 @@ public class MainMenu extends AppCompatActivity {
         Intent anterior = new Intent(vista.getContext(), imagenes.class);
         startActivity(anterior);
     }
+    public void toAñadirReceta(View vista) {
+        Intent anterior = new Intent(vista.getContext(), AnadirReceta.class);
+        startActivity(anterior);
+    }
 }
