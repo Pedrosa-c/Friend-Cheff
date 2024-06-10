@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.aplicacion_1.Adapters.RecetaAdapter;
 import com.example.aplicacion_1.Clases.Receta;
+import com.example.aplicacion_1.Clases.Singleton;
 import com.example.aplicacion_1.MainMenu;
 import com.example.aplicacion_1.R;
 import com.example.aplicacion_1.conexion.RecetaService;
@@ -97,6 +98,9 @@ public class Recetas extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 Log.d("ONCLICK", "DENTRO DEL ONCLICK, posición: " + position + " nombre: " + recetas.get(position).getNombre());
+                //Para saber que usuario está logeado en todo momento
+                Singleton.getInstance().setRecetaId(recetas.get(position).getId());
+
                 Intent intent = new Intent(Recetas.this, singleReceta.class);
 
                 intent.putExtra("nombre", recetas.get(position).getNombre());
@@ -105,13 +109,6 @@ public class Recetas extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // Log adicional para verificar el estado del adaptador
-        if (myRecycler.getAdapter() != null) {
-            Log.d("RECYCLER VIEW", "Adaptador asignado correctamente");
-        } else {
-            Log.d("RECYCLER VIEW", "Adaptador no asignado");
-        }
     }
 
     public void toMenu(View view) {

@@ -46,4 +46,16 @@ public interface RecetaService {
             @Field("password") String password
     );
 
+    @FormUrlEncoded
+    @POST("friendchef/anadirComentario")
+    Call<Void> anadirComentario(
+            @Field("id") int id,
+            @Field("texto") String texto,
+            @Field("valoracion") String valoracion,
+            @Field("fecha") String fecha,
+            @Field("hora") String hora,
+            @Field("recetaId") int recetaId,
+            @Field("usuarioId") int usuarioId
+    );
+
 }
