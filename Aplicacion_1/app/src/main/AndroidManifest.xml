@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.aplicacion_1">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
     <application
         android:allowBackup="true"
@@ -13,20 +21,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Aplicacion_1">
         <activity
+            android:name=".Camera"
+            android:exported="true" />
+        <activity
             android:name=".SingleUsuario"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".newComentario"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Recetas.singleReceta"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Recetas.Recetas"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Settings"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Login.FailedLogin"
             android:exported="true" />

@@ -19,6 +19,10 @@ public class Singleton {
         return userId;
     }
 
+    public Usuario getUser() {
+        return usuario;
+    }
+
     public void setReceta(Receta receta){this.receta = receta;}
 
     public void setUsuario(Usuario usuario){this.usuario = usuario;}
