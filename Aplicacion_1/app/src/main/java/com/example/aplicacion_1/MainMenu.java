@@ -27,4 +27,9 @@ public class MainMenu extends AppCompatActivity {
         Intent anterior = new Intent(vista.getContext(), Recetas.class);
         startActivity(anterior);
     }
+
+    public void toCamera(View vista){
+        Intent anterior = new Intent(vista.getContext(), Camera.class);
+        startActivity(anterior);
+    }
 }
