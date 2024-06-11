@@ -4,20 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".Login.FailedLogin">
-
-    <Button
-        android:id="@+id/BotonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="toLogin"
-        android:text="Retry"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.778" />
 
     <TextView
         android:id="@+id/Siguiente"
@@ -25,48 +13,65 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="76dp"
         android:text="FAILED LOGIN"
-        android:textSize="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/BotonLogin"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintVertical_bias="0.2" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Password or Name incorrect"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/BotonLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Siguiente"
-        app:layout_constraintVertical_bias="0.58" />
+        app:layout_constraintVertical_bias="0.3" />
+
+    <Button
+        android:id="@+id/BotonLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:onClick="toLogin"
+        android:text="Retry"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.8" />
 
     <Button
         android:id="@+id/buttonRegister"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
         android:onClick="toRegister"
         android:text="Register"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BotonLogin"
-        app:layout_constraintVertical_bias="0.398" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.808"
+        app:layout_constraintWidth_percent="0.8" />
 
     <View
         android:id="@+id/divider2"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7" />
+        app:layout_constraintVertical_bias="0.85"
+        app:layout_constraintWidth_percent="0.8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
