@@ -37,4 +37,9 @@ public class MainMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void toPersonalUser(View view) {
+        Intent intent = new Intent(view.getContext(), PersonalUser.class);
+        startActivity(intent);
+    }
+
 }

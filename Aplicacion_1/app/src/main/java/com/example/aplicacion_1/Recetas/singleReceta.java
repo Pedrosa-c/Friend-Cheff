@@ -140,6 +140,7 @@ public class singleReceta extends AppCompatActivity {
                         for (Usuario usuario_ : usuarios) {
                             for(int id : usuario_.getIdRecetas()){
                                 if(id == idReceta){
+                                    Log.d("USUARIO", "");
                                     usuario = usuario_;
                                     Singleton.getInstance().setUsuario(usuario);
                                     textViewUser.setText(usuario.getNombre());

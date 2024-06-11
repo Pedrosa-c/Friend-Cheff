@@ -1,4 +1,6 @@
+/*
 package com.example.aplicacion_1
+
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,3 +47,4 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+*/
