@@ -64,4 +64,18 @@ public interface RecetaService {
     Call<Usuario> obtenerUsuario(
             @Field("usuarioId") int usuarioId
     );
+
+    @FormUrlEncoded
+    @POST("friendchef/actualizarUsuario")
+    Call<Void> actualizarUsuario(
+            @Field("id") int id,
+            @Field("nombre") String nombre,
+            @Field("telefono") String telefono,
+            @Field("email") String email,
+            @Field("contraseña") String contraseña,
+            @Field("idAlergias") String idAlergias,  // Usamos String para listas
+            @Field("idRecetas") String idRecetas,    // Usamos String para listas
+            @Field("idComentarios") String idComentarios,  // Usamos String para listas
+            @Field("idAmigos") String idAmigos       // Usamos String para listas
+    );
 }
