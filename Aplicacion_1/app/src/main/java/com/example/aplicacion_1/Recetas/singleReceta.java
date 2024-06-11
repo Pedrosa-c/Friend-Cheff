@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +35,6 @@ public class singleReceta extends AppCompatActivity {
 
     private List<Comentario> comentarios;
     private List<Comentario> comentariosMuestra = new ArrayList<>();
-
     private List<Usuario> usuarios;
     private Usuario usuario;
 
@@ -42,8 +42,8 @@ public class singleReceta extends AppCompatActivity {
     private RecetaService servicios;
     private Context miContexto;
     private int idReceta = Singleton.getInstance().getRecetaId();
-
     private int usuarioLogeado = Singleton.getInstance().getUserId();
+    private String origenRecibido;  // Guardar el origen recibido
 
     Bundle contenidoActividadRecetas;
 
@@ -113,7 +113,7 @@ public class singleReceta extends AppCompatActivity {
         TextView textViewUser = findViewById(R.id.usuario);
 
         String nombreRecibido = contenidoActividadRecetas.getString("nombre");
-        String origenRecibido = contenidoActividadRecetas.getString("origen");
+        origenRecibido = contenidoActividadRecetas.getString("origen");  // Guardar el origen recibido
         String descripcionRecibida = contenidoActividadRecetas.getString("descripcion");
 
         textViewNombre.setText(nombreRecibido);
@@ -176,8 +176,32 @@ public class singleReceta extends AppCompatActivity {
     }
 
     public void toSingleUser(View vista){
-
         Intent anterior = new Intent(vista.getContext(), SingleUsuario.class);
         startActivity(anterior);
+    }
+
+    public void openMaps(View view) {
+        if (origenRecibido != null && !origenRecibido.isEmpty()) {
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(origenRecibido));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+            // Opcional: puedes probar sin esta línea si la siguiente no funciona
+            // mapIntent.setPackage("com.google.android.apps.maps");
+
+            if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
+            } else {
+                // Intent explícito para asegurarse de que se abra en Google Maps
+                try {
+                    Intent explicitIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    explicitIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(explicitIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Google Maps no está instalado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(this, "Origen no disponible", Toast.LENGTH_SHORT).show();
+        }
     }
 }
