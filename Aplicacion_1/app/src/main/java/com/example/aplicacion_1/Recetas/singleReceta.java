@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.aplicacion_1.Adapters.ComentarioAdapter;
 import com.example.aplicacion_1.Clases.Comentario;
+import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Singleton;
 import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.R;
@@ -39,9 +40,12 @@ public class singleReceta extends AppCompatActivity {
     private Usuario usuario;
 
     private RecyclerView myRecycler;
+
+    private RecyclerView myRecyclerIngredientes;
     private RecetaService servicios;
     private Context miContexto;
     private int idReceta = Singleton.getInstance().getRecetaId();
+    private Receta receta = Singleton.getInstance().getReceta();
     private int usuarioLogeado = Singleton.getInstance().getUserId();
     private String origenRecibido;  // Guardar el origen recibido
 
@@ -57,9 +61,14 @@ public class singleReceta extends AppCompatActivity {
         contenidoActividadRecetas = getIntent().getExtras();
 
         servicios = RetrofitClient.getClient().create(RecetaService.class);
+
         myRecycler = findViewById(R.id.rvComentarios);
         myRecycler.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
         myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));
+
+        myRecyclerIngredientes = findViewById(R.id.rvIngredientes);
+        myRecyclerIngredientes.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
+        myRecyclerIngredientes.setLayoutManager(new LinearLayoutManager(miContexto));
 
         Log.d("ID Receta", "id de la receta viendose: " +  Singleton.getInstance().getRecetaId());
 

@@ -55,13 +55,13 @@ public class Login extends AppCompatActivity {
 
     public void verificaDatos(View vista){
 
-        String myEmail = name.getText().toString();
+        String myName = name.getText().toString();
         String myPassword = password.getText().toString();
 
-        Log.d("Valor name: ", myEmail);
+        Log.d("Valor name: ", myName);
 
         // Realiza una llamada asíncrona al servicio de recetas para obtener el usuario dado el nombre
-        Call<List<Usuario>> call = servicios.filtrarUsuariosNombre(myEmail);
+        Call<List<Usuario>> call = servicios.filtrarUsuariosNombre(myName);
         call.enqueue(new Callback<List<Usuario>>() {
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {

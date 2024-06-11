@@ -25,6 +25,8 @@ public class Singleton {
 
     public void setReceta(Receta receta){this.receta = receta;}
 
+    public Receta getReceta(){return this.receta;}
+
     public void setUsuario(Usuario usuario){this.usuario = usuario;}
 
     public void setUserId(int id) {

@@ -26,6 +26,10 @@ public interface RecetaService {
     @GET("friendchef/ListadoUsuarios")
     Call<List<Usuario>> listarUsuarios();
 
+    // Método para obtener todos los ingredientes disponibles
+    @GET("friendchef/ListadoIngredientes")
+    Call<List<Ingrediente>> listarIngredientes();
+
     // Método para obtener todos los usuarios disponibles
     @GET("friendchef/ListadoComentarios")
     Call<List<Comentario>> listarComentarios();
@@ -73,9 +77,30 @@ public interface RecetaService {
             @Field("telefono") String telefono,
             @Field("email") String email,
             @Field("contraseña") String contraseña,
-            @Field("idAlergias") String idAlergias,  // Usamos String para listas
-            @Field("idRecetas") String idRecetas,    // Usamos String para listas
-            @Field("idComentarios") String idComentarios,  // Usamos String para listas
-            @Field("idAmigos") String idAmigos       // Usamos String para listas
+            @Field("idAlergias") List<Integer> idAlergias,  // Usamos String para listas
+            @Field("idRecetas") List<Integer> idRecetas,    // Usamos String para listas
+            @Field("idComentarios") List<Integer> idComentarios,  // Usamos String para listas
+            @Field("idAmigos") List<Integer> idAmigos       // Usamos String para listas
+    );
+    @FormUrlEncoded
+    @POST("friendchef/anadirReceta")
+    Call<Void> anadirReceta(
+            @Field("id") int id,
+            @Field("nombre") String nombre,
+            @Field("descripcion") String descripcion,
+            @Field("origen") String origen,
+            @Field("ingredientes") List<Integer> ingredientes,
+            @Field("imagenes") List<Integer> imagenes  // Usamos String para listas
+    );
+
+    @FormUrlEncoded
+    @POST("friendchef/actualizarReceta")
+    Call<Void> actualizarReceta(
+            @Field("id") int id,
+            @Field("nombre") String nombre,
+            @Field("descripcion") String descripcion,
+            @Field("origen") String origen,
+            @Field("ingredientes") List<Integer> ingredientes,  // Usamos String para listas
+            @Field("imagenes") List<Integer> imagenes    // Usamos String para listas
     );
 }
