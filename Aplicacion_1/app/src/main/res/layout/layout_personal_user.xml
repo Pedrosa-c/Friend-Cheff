@@ -7,4 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".PersonalUser">
 
+    <TextView
+        android:id="@+id/nombre"
+        android:layout_width="188dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="72dp"
+        android:text="Recetas"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.037" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRecetas"
+        android:layout_width="356dp"
+        android:layout_height="487dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRecetas"
+        app:layout_constraintVertical_bias="0.622" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

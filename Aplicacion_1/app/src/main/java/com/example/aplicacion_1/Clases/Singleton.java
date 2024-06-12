@@ -6,6 +6,8 @@ public class Singleton {
     private Receta receta;
     private Usuario usuario;
 
+    private Usuario usuarioLogeado;
+
     private Singleton() { }
 
     public static Singleton getInstance() {
@@ -23,11 +25,17 @@ public class Singleton {
         return usuario;
     }
 
+    public Usuario getUserLogeado() {
+        return usuarioLogeado;
+    }
+
     public void setReceta(Receta receta){this.receta = receta;}
 
     public Receta getReceta(){return this.receta;}
 
     public void setUsuario(Usuario usuario){this.usuario = usuario;}
+
+    public void setUsuarioLogeado(Usuario usuario){this.usuarioLogeado = usuario;}
 
     public void setUserId(int id) {
         this.userId = id;

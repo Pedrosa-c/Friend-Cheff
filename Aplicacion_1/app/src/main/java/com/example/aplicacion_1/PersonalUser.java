@@ -3,19 +3,13 @@ package com.example.aplicacion_1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.aplicacion_1.Adapters.RecetaAdapter;
 import com.example.aplicacion_1.Adapters.RecetaPersonalAdapter;
 import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Singleton;
@@ -40,9 +34,9 @@ public class PersonalUser extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_single_usuario);
+        setContentView(R.layout.layout_personal_user);
 
-        usuario = Singleton.getInstance().getUser();
+        usuario = Singleton.getInstance().getUserLogeado();
         nombre = findViewById(R.id.nombre);
         nombre.setText(usuario.getNombre());
 
@@ -120,5 +114,33 @@ public class PersonalUser extends AppCompatActivity {
         Log.d("CONFIGURAR ADAPTADOR", "Configurando el adaptador con las recetas");
         RecetaPersonalAdapter adapter = new RecetaPersonalAdapter(this, recetas);
         myRecycler.setAdapter(adapter);
+        adapter.setOnItemClickListener(new RecetaPersonalAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                // Para saber que usuario está logeado en todo momento
+                // Llama al método actualizarUsuario para añadir el nuevo usuario
+
+                List<Integer> idRecetasUsuario = usuario.getIdRecetas();
+
+                idRecetasUsuario.remove(Integer.valueOf(recetas.get(position).getId()));
+
+                Call<Void> updateCall = servicios.actualizarUsuario(usuario.getIdUsuario(), null, null, null, null, null, idRecetasUsuario, null, null);
+                updateCall.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            // Ir a la actividad anterior después de actualizar el usuario
+                            Intent anterior = new Intent(PersonalUser.this, PersonalUser.class);
+                            startActivity(anterior);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.d("Usuarios", "Fallo de conexion al añadir el usuario: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 }

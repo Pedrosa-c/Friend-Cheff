@@ -79,6 +79,7 @@ public class Login extends AppCompatActivity {
 
                             //Para saber que usuario está logeado en todo momento
                             Singleton.getInstance().setUserId(usuario.getIdUsuario());
+                            Singleton.getInstance().setUsuarioLogeado(usuario);
 
                             Intent acceso = new Intent(miContexto, MainMenu.class);
                             miContexto.startActivity(acceso);

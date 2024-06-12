@@ -2,6 +2,7 @@ package com.example.aplicacion_1.conexion;
 
 
 import com.example.aplicacion_1.Clases.Comentario;
+import com.example.aplicacion_1.Clases.Imagen;
 import com.example.aplicacion_1.Clases.Ingrediente;
 import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Usuario;
@@ -25,6 +26,10 @@ public interface RecetaService {
     // Método para obtener todos los usuarios disponibles
     @GET("friendchef/ListadoUsuarios")
     Call<List<Usuario>> listarUsuarios();
+
+    // Método para obtener todas las imagens disponibles
+    @GET("friendchef/ListadoImagenes")
+    Call<List<Imagen>> listarImagenes();
 
     // Método para obtener todos los ingredientes disponibles
     @GET("friendchef/ListadoIngredientes")
@@ -94,6 +99,14 @@ public interface RecetaService {
     );
 
     @FormUrlEncoded
+    @POST("friendchef/anadirImagen")
+    Call<Void> anadirImagen(
+        @Field("id") int id,
+        @Field("ruta") String nombre,
+        @Field("usuarioId") int usuarioId
+    );
+
+    @FormUrlEncoded
     @POST("friendchef/actualizarReceta")
     Call<Void> actualizarReceta(
             @Field("id") int id,
@@ -102,5 +115,13 @@ public interface RecetaService {
             @Field("origen") String origen,
             @Field("ingredientes") List<Integer> ingredientes,  // Usamos String para listas
             @Field("imagenes") List<Integer> imagenes    // Usamos String para listas
+    );
+
+    @FormUrlEncoded
+    @POST("friendchef/filtrarRecetas")
+    Call<List<Receta>> filtrarRecetas(
+            @Field("nombre") String nombre,
+            @Field("ingrediente") String ingrediente,
+            @Field("origen") String origen
     );
 }

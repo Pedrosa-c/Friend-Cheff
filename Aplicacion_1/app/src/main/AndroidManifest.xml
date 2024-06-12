@@ -55,6 +55,9 @@
             android:name=".MainMenu"
             android:exported="true" />
         <activity
+            android:name=".crearReceta"
+            android:exported="true" />
+        <activity
             android:name=".Login.Register"
             android:exported="true" />
         <activity

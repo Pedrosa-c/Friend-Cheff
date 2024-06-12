@@ -38,7 +38,12 @@ public class MainMenu extends AppCompatActivity {
     }
 
     public void toPersonalUser(View view) {
-        Intent intent = new Intent(view.getContext(), PersonalUser.class);
+        Intent intent = new Intent(this, PersonalUser.class);
+        startActivity(intent);
+    }
+
+    public void toCrearReceta(View view) {
+        Intent intent = new Intent(view.getContext(), crearReceta.class);
         startActivity(intent);
     }
 
