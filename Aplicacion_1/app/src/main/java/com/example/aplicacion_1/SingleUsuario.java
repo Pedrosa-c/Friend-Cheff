@@ -129,7 +129,6 @@ public class SingleUsuario extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     usuarioLogeado = response.body();
 
-                    TextView error = findViewById(R.id.error);
 
                     // Actualizar la lista de amigos
                     int id = usuarioLogeado.getIdUsuario();
@@ -144,12 +143,6 @@ public class SingleUsuario extends AppCompatActivity {
 
                     if (!idAmigos.contains(usuario.getIdUsuario())) {
                         idAmigos.add(usuario.getIdUsuario());
-                    }
-
-                    for(int i : idAmigos){
-                        if(i == usuario.getIdUsuario() || i == usuarioLogeado.getIdUsuario()){
-                            error.setText("Ya estas siguiendo a este usuario");
-                        }
                     }
 
                     // Llama al método actualizarUsuario para añadir el nuevo usuario

@@ -113,15 +113,24 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvIngredientes"
-        android:layout_width="352dp"
-        android:layout_height="338dp"
+        android:layout_width="341dp"
+        android:layout_height="129dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descripcion"
+        app:layout_constraintVertical_bias="0.192"
         app:layout_constraintWidth_percent="0.9" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvImagenes"
+        android:layout_width="334dp"
+        android:layout_height="127dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvIngredientes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

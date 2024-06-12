@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.aplicacion_1.Adapters.ImagenesAdapter;
 import com.example.aplicacion_1.Adapters.IngredientesAdapter;
+import com.example.aplicacion_1.Clases.Imagen;
 import com.example.aplicacion_1.Clases.Ingrediente;
 import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Singleton;
@@ -34,26 +36,39 @@ import retrofit2.Response;
 
 public class crearReceta extends AppCompatActivity {
     private RecyclerView myRecycler;
+    private RecyclerView myImageRecycler;
     private RecetaService servicios;
     private List<Ingrediente> ingredientes;
     private List<Integer> ingredientesSeleccionados = new ArrayList<>();
     private List<Receta> recetas;
+    private List<Imagen> imagenes;
     private int idUsuarioLogeado = Singleton.getInstance().getUserId();
     private int ultimoId;
+
+    private List<Integer> imagenesReceta = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_crear_receta);
 
-        // Inicializa el RecyclerView
+        // Inicializa el RecyclerView para Ingredientes
         myRecycler = findViewById(R.id.rvIngredientes);
         if (myRecycler == null) {
-            Log.e("crearReceta", "RecyclerView no encontrado");
+            Log.e("crearReceta", "RecyclerView de ingredientes no encontrado");
             return;
         }
         myRecycler.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         myRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializa el RecyclerView para Imágenes
+        myImageRecycler = findViewById(R.id.rvImagenes);
+        if (myImageRecycler == null) {
+            Log.e("crearReceta", "RecyclerView de imágenes no encontrado");
+            return;
+        }
+        myImageRecycler.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        myImageRecycler.setLayoutManager(new LinearLayoutManager(this));
 
         // Inicializa el servicio de recetas utilizando Retrofit
         servicios = RetrofitClient.getClient().create(RecetaService.class);
@@ -65,6 +80,7 @@ public class crearReceta extends AppCompatActivity {
         });
 
         listarIngredientes();
+        listarImagenes();
 
         findViewById(R.id.bottom).setOnClickListener(v -> obtenerUltimoId());
     }
@@ -78,7 +94,7 @@ public class crearReceta extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("LISTA Ingredientes", "ME HAN RESPONDIDO");
                     ingredientes = response.body();
-                    configurarAdaptador();
+                    configurarAdaptadorIngredientes();
                 } else {
                     Log.d("LISTA Ingredientes", "RESPUESTA FALLIDA: " + response.message());
                     Toast.makeText(crearReceta.this, "Error en la respuesta: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -93,7 +109,31 @@ public class crearReceta extends AppCompatActivity {
         });
     }
 
-    private void configurarAdaptador() {
+    private void listarImagenes() {
+        Call<List<Imagen>> call = servicios.listarImagenes();
+        call.enqueue(new Callback<List<Imagen>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Imagen>> call, @NonNull Response<List<Imagen>> response) {
+                Log.d("LISTA Imagenes", "CONEXION EXITOSA");
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("LISTA Imagenes", "ME HAN RESPONDIDO");
+                    imagenes = response.body();
+                    configurarAdaptadorImagenes();
+                } else {
+                    Log.d("LISTA Imagenes", "RESPUESTA FALLIDA: " + response.message());
+                    Toast.makeText(crearReceta.this, "Error en la respuesta: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Imagen>> call, @NonNull Throwable t) {
+                Log.d("LISTA IMAGENES", "CONEXION FALLIDA: " + t.getMessage());
+                Toast.makeText(crearReceta.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void configurarAdaptadorIngredientes() {
         if (ingredientes == null || ingredientes.isEmpty()) {
             Log.d("CONFIGURAR ADAPTADOR", "La lista de ingredientes está vacía o es nula");
             return;
@@ -126,6 +166,39 @@ public class crearReceta extends AppCompatActivity {
             }
         });
     }
+
+    private void configurarAdaptadorImagenes() {
+        if (imagenes == null || imagenes.isEmpty()) {
+            Log.d("CONFIGURAR ADAPTADOR", "La lista de imágenes está vacía o es nula");
+            return;
+        }
+
+        Log.d("CONFIGURAR ADAPTADOR", "Configurando el adaptador con las imágenes");
+        ImagenesAdapter adapter = new ImagenesAdapter(this, imagenes);
+        myImageRecycler.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new ImagenesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                // Obtener el ViewHolder en la posición clicada
+                RecyclerView.ViewHolder viewHolder = myImageRecycler.findViewHolderForAdapterPosition(position);
+                if (viewHolder instanceof ImagenesAdapter.ImagenesViewHolder) {
+                    ImagenesAdapter.ImagenesViewHolder imagenesViewHolder = (ImagenesAdapter.ImagenesViewHolder) viewHolder;
+                    // Alternar la visibilidad del ImageView con id confirmar
+                    if (imagenesViewHolder.confirmar.getVisibility() == View.VISIBLE) {
+                        imagenesViewHolder.confirmar.setVisibility(View.GONE);
+                        imagenesReceta.remove(imagenes.get(position).getId());
+
+                    } else {
+                        imagenesViewHolder.confirmar.setVisibility(View.VISIBLE);
+                        imagenesReceta.add(imagenes.get(position).getId());
+
+                    }
+                }
+            }
+        });
+    }
+
 
     public void obtenerUltimoId() {
         Call<List<Receta>> call = servicios.listarRecetas();
@@ -164,7 +237,7 @@ public class crearReceta extends AppCompatActivity {
         String descripcion = description.getText().toString();
         String origen = origin.getText().toString();
 
-        Call<Void> call = servicios.anadirReceta(id, nombre, descripcion, origen, ingredientesSeleccionados, null);
+        Call<Void> call = servicios.anadirReceta(id, nombre, descripcion, origen, ingredientesSeleccionados, imagenesReceta);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -191,7 +264,7 @@ public class crearReceta extends AppCompatActivity {
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Usuario usuarioLogeado = response.body();
-                    List<Integer> idRecetas = new ArrayList<>(usuarioLogeado.getIdRecetas());
+                    List<Integer> idRecetas = new ArrayList<>();
                     idRecetas.add(ultimoId);
 
                     Call<Void> updateCall = servicios.actualizarUsuario(idUsuarioLogeado, usuarioLogeado.getNombre(), usuarioLogeado.getTelefono(),
@@ -202,13 +275,14 @@ public class crearReceta extends AppCompatActivity {
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
                                 Log.d("Usuarios", "Usuario actualizado correctamente");
+                                Singleton.getInstance().setUserId(idUsuarioLogeado);
+
                                 Intent anterior = new Intent(crearReceta.this, MainMenu.class);
                                 startActivity(anterior);
                             } else {
                                 Log.d("Usuarios", "Fallo al actualizar el usuario: " + response.message());
                             }
                         }
-
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.d("Usuarios", "Fallo de conexión al actualizar el usuario: " + t.getMessage());
@@ -218,7 +292,6 @@ public class crearReceta extends AppCompatActivity {
                     Log.d("Usuarios", "Fallo al obtener el usuario: " + response.message());
                 }
             }
-
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
                 Log.d("Usuarios", "Fallo de conexión al obtener el usuario: " + t.getMessage());

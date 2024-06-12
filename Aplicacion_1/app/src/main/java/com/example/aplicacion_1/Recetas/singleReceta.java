@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,17 +39,14 @@ public class singleReceta extends AppCompatActivity {
     private List<Comentario> comentariosMuestra = new ArrayList<>();
     private List<Usuario> usuarios;
     private Usuario usuario;
-
     private RecyclerView myRecycler;
-
     private RecyclerView myRecyclerIngredientes;
     private RecetaService servicios;
     private Context miContexto;
     private int idReceta = Singleton.getInstance().getRecetaId();
     private Receta receta = Singleton.getInstance().getReceta();
     private int usuarioLogeado = Singleton.getInstance().getUserId();
-    private String origenRecibido;  // Guardar el origen recibido
-
+    private String origenRecibido;  // Guardar el origen recibid
     Bundle contenidoActividadRecetas;
 
     @Override
@@ -120,6 +118,8 @@ public class singleReceta extends AppCompatActivity {
         TextView textViewOrigen = findViewById(R.id.origen);
         TextView textViewDescripcion = findViewById(R.id.descripcion);
         TextView textViewUser = findViewById(R.id.usuario);
+        ImageView imagen = findViewById(R.id.imagen);
+
 
         String nombreRecibido = contenidoActividadRecetas.getString("nombre");
         origenRecibido = contenidoActividadRecetas.getString("origen");  // Guardar el origen recibido
@@ -215,4 +215,6 @@ public class singleReceta extends AppCompatActivity {
             Toast.makeText(this, "Origen no disponible", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }
