@@ -1,20 +1,19 @@
 package com.example.aplicacion_1;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-
-import com.example.aplicacion_1.Adapters.RecetaAdapter;
+import com.example.aplicacion_1.Adapters.RecetaPersonalAdapter;
 import com.example.aplicacion_1.Clases.Receta;
-import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.Clases.Singleton;
+import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.conexion.RecetaService;
 import com.example.aplicacion_1.conexion.RetrofitClient;
 
@@ -25,11 +24,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SingleUsuario extends AppCompatActivity {
-
+public class PersonalUser extends AppCompatActivity {
     TextView nombre;
     Usuario usuario, usuarioLogeado;
-
     private List<Receta> recetas;
     private RecyclerView myRecycler;
     private RecetaService servicios;
@@ -37,9 +34,9 @@ public class SingleUsuario extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_single_usuario);
+        setContentView(R.layout.layout_personal_user);
 
-        usuario = Singleton.getInstance().getUser();
+        usuario = Singleton.getInstance().getUserLogeado();
         nombre = findViewById(R.id.nombre);
         nombre.setText(usuario.getNombre());
 
@@ -115,61 +112,34 @@ public class SingleUsuario extends AppCompatActivity {
         }
 
         Log.d("CONFIGURAR ADAPTADOR", "Configurando el adaptador con las recetas");
-        RecetaAdapter adapter = new RecetaAdapter(this, recetas);
+        RecetaPersonalAdapter adapter = new RecetaPersonalAdapter(this, recetas);
         myRecycler.setAdapter(adapter);
-    }
-
-    // Editar el usuario registrado y añadir en su idAmigos el id del usuario que se va a seguir
-    public void seguir(View v) {
-        Call<Usuario> call = servicios.obtenerUsuario(Singleton.getInstance().getUserId());
-
-        call.enqueue(new Callback<Usuario>() {
+        adapter.setOnItemClickListener(new RecetaPersonalAdapter.OnItemClickListener() {
             @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    usuarioLogeado = response.body();
+            public void onItemClick(int position) {
+                // Para saber que usuario está logeado en todo momento
+                // Llama al método actualizarUsuario para añadir el nuevo usuario
 
+                List<Integer> idRecetasUsuario = usuario.getIdRecetas();
 
-                    // Actualizar la lista de amigos
-                    int id = usuarioLogeado.getIdUsuario();
-                    String nombre = usuarioLogeado.getNombre();
-                    String telefono = usuarioLogeado.getTelefono();
-                    String email = usuarioLogeado.getEmail();
-                    String password = usuarioLogeado.getContraseña();
-                    List<Integer> idAlergias = usuarioLogeado.getIdAlergias();
-                    List<Integer> idRecetas = usuarioLogeado.getIdRecetas();
-                    List<Integer> idComentarios = usuarioLogeado.getIdComentarios();
-                    List<Integer> idAmigos = usuarioLogeado.getIdAmigos();
+                idRecetasUsuario.remove(Integer.valueOf(recetas.get(position).getId()));
 
-                    if (!idAmigos.contains(usuario.getIdUsuario())) {
-                        idAmigos.add(usuario.getIdUsuario());
+                Call<Void> updateCall = servicios.actualizarUsuario(usuario.getIdUsuario(), null, null, null, null, null, idRecetasUsuario, null, null);
+                updateCall.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            // Ir a la actividad anterior después de actualizar el usuario
+                            Intent anterior = new Intent(PersonalUser.this, PersonalUser.class);
+                            startActivity(anterior);
+                        }
                     }
 
-                    // Llama al método actualizarUsuario para añadir el nuevo usuario
-                    Call<Void> updateCall = servicios.actualizarUsuario(id, nombre, telefono, email, password, idAlergias, idRecetas, idComentarios, idAmigos);
-                    updateCall.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if (response.isSuccessful()) {
-                                // Ir a la actividad anterior después de actualizar el usuario
-                                Intent anterior = new Intent(SingleUsuario.this, MainMenu.class);
-                                startActivity(anterior);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Log.d("Usuarios", "Fallo de conexion al añadir el usuario: " + t.getMessage());
-                        }
-                    });
-                } else {
-                    Log.d("Usuarios", "Fallo al obtener el usuario: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.d("Usuarios", "Fallo de conexion al obtener el usuario: " + t.getMessage());
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.d("Usuarios", "Fallo de conexion al añadir el usuario: " + t.getMessage());
+                    }
+                });
             }
         });
     }

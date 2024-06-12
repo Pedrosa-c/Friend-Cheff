@@ -6,29 +6,41 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/texto"
-        android:layout_width="234dp"
-        android:layout_height="26dp"
+        android:id="@+id/nombre"
+        android:layout_width="176dp"
+        android:layout_height="40dp"
         android:layout_margin="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:text="Nombre de la Receta"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/valoracion"
-        android:layout_width="189dp"
-        android:layout_height="21dp"
+        android:id="@+id/descripcion"
+        android:layout_width="298dp"
+        android:layout_height="91dp"
         android:layout_margin="8dp"
         android:layout_marginTop="8dp"
         android:text="Descripción de la Receta"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.175"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/texto" />
+        app:layout_constraintTop_toBottomOf="@id/nombre" />
+
+    <ImageView
+        android:id="@+id/borrar"
+        android:layout_width="66dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toEndOf="@+id/nombre"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.164"
+        app:srcCompat="@android:drawable/ic_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

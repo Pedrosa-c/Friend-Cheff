@@ -1,98 +1,130 @@
 package com.example.aplicacion_1;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.List;
+import java.io.IOException;
 
 public class Camera extends AppCompatActivity {
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_CAMERA_PERMISSION = 200;
+
     private static final String TAG = "CameraActivity";
+
+    private ImageView imageView;
+
+    // ActivityResultLauncher for requesting permission
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d(TAG, "Permission granted. Opening gallery.");
+                    openGallery();
+                } else {
+                    Log.d(TAG, "Permission denied.");
+                    showSettingsDialog();
+                }
+            });
+
+    // ActivityResultLauncher for opening the gallery
+    private final ActivityResultLauncher<Intent> openGalleryLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    Log.d(TAG, "Image selected.");
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                        imageView.setImageBitmap(bitmap);
+                        Log.d(TAG, "Image set in ImageView.");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Error loading image.", e);
+                    }
+                } else {
+                    Log.d(TAG, "No image selected or other activity result.");
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_camera);
-    }
 
-    public void onCameraClick(View view) {
-        Log.d(TAG, "Camera button clicked");
-        // Check for camera permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Camera permission not granted, requesting permission");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        } else {
-            Log.d(TAG, "Camera permission already granted, opening camera");
-            openCamera();
-        }
-    }
+        imageView = findViewById(R.id.imageView);
+        Button button = findViewById(R.id.button_camera);
 
-    private void openCamera() {
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Log.d(TAG, "Intent created");
-
-            // List all apps that can handle this intent
-            List<ResolveInfo> cameraApps = getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
-            for (ResolveInfo resolveInfo : cameraApps) {
-                Log.d(TAG, "Camera app available: " + resolveInfo.activityInfo.packageName);
-            }
-
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                Log.d(TAG, "Camera app found, starting camera intent");
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        button.setOnClickListener(view -> {
+            Log.d(TAG, "Button clicked");
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Permission not granted. Requesting permission.");
+                requestStoragePermission();
             } else {
-                Log.d(TAG, "No camera app found");
-                Toast.makeText(this, "No camera app found", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Permission granted. Opening gallery.");
+                openGallery();
             }
+        });
+    }
+
+    private void requestStoragePermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            showPermissionExplanationDialog();
         } else {
-            Log.d(TAG, "No camera hardware found");
-            Toast.makeText(this, "No camera hardware found", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Requesting storage permission.");
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Camera permission granted, opening camera");
-                openCamera();
-            } else {
-                Log.d(TAG, "Camera permission denied");
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
+    private void showPermissionExplanationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permiso Necesario")
+                .setMessage("Este permiso es necesario para acceder a tus imágenes. Por favor, otorga el permiso.")
+                .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE))
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    dialog.dismiss();
+                    Toast.makeText(Camera.this, "Permiso denegado. No se puede abrir la galería.", Toast.LENGTH_SHORT).show();
+                })
+                .create()
+                .show();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (data != null) {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                ImageView imageView = findViewById(R.id.imageView);
-                imageView.setImageBitmap(imageBitmap);
-                Log.d(TAG, "Image captured and displayed");
-            }
-        }
+    private void showSettingsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permiso Necesario")
+                .setMessage("El permiso para acceder al almacenamiento es necesario. Por favor, permite el acceso desde la configuración de la aplicación.")
+                .setPositiveButton("Ir a Configuración", (dialog, which) -> openAppSettings())
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    dialog.dismiss();
+                    Toast.makeText(Camera.this, "Permiso denegado. No se puede abrir la galería.", Toast.LENGTH_SHORT).show();
+                })
+                .create()
+                .show();
+    }
+
+    private void openAppSettings() {
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    private void openGallery() {
+        Log.d(TAG, "Opening gallery.");
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        openGalleryLauncher.launch(intent);
     }
 }

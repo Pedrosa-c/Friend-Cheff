@@ -7,14 +7,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aplicacion_1.Adapters.ComentarioAdapter;
 import com.example.aplicacion_1.Clases.Comentario;
+import com.example.aplicacion_1.Clases.Receta;
 import com.example.aplicacion_1.Clases.Singleton;
 import com.example.aplicacion_1.Clases.Usuario;
 import com.example.aplicacion_1.R;
@@ -34,17 +37,16 @@ public class singleReceta extends AppCompatActivity {
 
     private List<Comentario> comentarios;
     private List<Comentario> comentariosMuestra = new ArrayList<>();
-
     private List<Usuario> usuarios;
     private Usuario usuario;
-
     private RecyclerView myRecycler;
+    private RecyclerView myRecyclerIngredientes;
     private RecetaService servicios;
     private Context miContexto;
     private int idReceta = Singleton.getInstance().getRecetaId();
-
+    private Receta receta = Singleton.getInstance().getReceta();
     private int usuarioLogeado = Singleton.getInstance().getUserId();
-
+    private String origenRecibido;  // Guardar el origen recibid
     Bundle contenidoActividadRecetas;
 
     @Override
@@ -57,9 +59,14 @@ public class singleReceta extends AppCompatActivity {
         contenidoActividadRecetas = getIntent().getExtras();
 
         servicios = RetrofitClient.getClient().create(RecetaService.class);
+
         myRecycler = findViewById(R.id.rvComentarios);
         myRecycler.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
         myRecycler.setLayoutManager(new LinearLayoutManager(miContexto));
+
+        myRecyclerIngredientes = findViewById(R.id.rvIngredientes);
+        myRecyclerIngredientes.addItemDecoration(new DividerItemDecoration(miContexto, DividerItemDecoration.VERTICAL));
+        myRecyclerIngredientes.setLayoutManager(new LinearLayoutManager(miContexto));
 
         Log.d("ID Receta", "id de la receta viendose: " +  Singleton.getInstance().getRecetaId());
 
@@ -111,9 +118,11 @@ public class singleReceta extends AppCompatActivity {
         TextView textViewOrigen = findViewById(R.id.origen);
         TextView textViewDescripcion = findViewById(R.id.descripcion);
         TextView textViewUser = findViewById(R.id.usuario);
+        ImageView imagen = findViewById(R.id.imagen);
+
 
         String nombreRecibido = contenidoActividadRecetas.getString("nombre");
-        String origenRecibido = contenidoActividadRecetas.getString("origen");
+        origenRecibido = contenidoActividadRecetas.getString("origen");  // Guardar el origen recibido
         String descripcionRecibida = contenidoActividadRecetas.getString("descripcion");
 
         textViewNombre.setText(nombreRecibido);
@@ -131,6 +140,7 @@ public class singleReceta extends AppCompatActivity {
                         for (Usuario usuario_ : usuarios) {
                             for(int id : usuario_.getIdRecetas()){
                                 if(id == idReceta){
+                                    Log.d("USUARIO", "");
                                     usuario = usuario_;
                                     Singleton.getInstance().setUsuario(usuario);
                                     textViewUser.setText(usuario.getNombre());
@@ -177,8 +187,34 @@ public class singleReceta extends AppCompatActivity {
     }
 
     public void toSingleUser(View vista){
-
         Intent anterior = new Intent(vista.getContext(), SingleUsuario.class);
         startActivity(anterior);
     }
+
+    public void openMaps(View view) {
+        if (origenRecibido != null && !origenRecibido.isEmpty()) {
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(origenRecibido));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+            // Opcional: puedes probar sin esta línea si la siguiente no funciona
+            // mapIntent.setPackage("com.google.android.apps.maps");
+
+            if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
+            } else {
+                // Intent explícito para asegurarse de que se abra en Google Maps
+                try {
+                    Intent explicitIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    explicitIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(explicitIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Google Maps no está instalado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(this, "Origen no disponible", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

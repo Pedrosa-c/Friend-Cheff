@@ -32,4 +32,19 @@ public class MainMenu extends AppCompatActivity {
         Intent anterior = new Intent(vista.getContext(), Camera.class);
         startActivity(anterior);
     }
+    public void openUploadPhotoActivity(View view) {
+        Intent intent = new Intent(this, Subir_Photo.class);
+        startActivity(intent);
+    }
+
+    public void toPersonalUser(View view) {
+        Intent intent = new Intent(this, PersonalUser.class);
+        startActivity(intent);
+    }
+
+    public void toCrearReceta(View view) {
+        Intent intent = new Intent(view.getContext(), crearReceta.class);
+        startActivity(intent);
+    }
+
 }
